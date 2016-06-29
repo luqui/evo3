@@ -53,6 +53,7 @@ MainModule = function(deps) {
             for (var i = 0; i < 100; i++) {
                 var x = Math.floor(Math.random() * self.field.width);
                 var y = Math.floor(Math.random() * self.field.height);
+                self.field.putEnergy(x, y, 1);
                 var life = self.field.get(x, y);
                 if (life) {
                     life.run(self.field);
@@ -72,6 +73,7 @@ MainModule = function(deps) {
                     var theta = Math.random()*2*Math.PI;
                     var x = x0 + Math.round(r*Math.cos(theta));
                     var y = y0 + Math.round(r*Math.sin(theta));
+                    self.field.putEnergy(x, y, 1);
                     var life = self.field.get(x, y);
                     if (life) {
                         life.run(self.field);
