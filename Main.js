@@ -13,13 +13,19 @@ $$.Main = function(window, canvas, pause) {
 
     var field = this.field;
 
-    var activate = function(e) {
-        var life = field.get(e.x - canvas.offsetLeft, e.y - canvas.offsetTop);
-        if (life) {
-            life.run(field);
-        }
+    this.mouseActive = false;
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    var self = this;
+    var updateMouse = function(e) {
+        var bound = canvas.getBoundingClientRect();
+        self.mouseX = e.clientX - bound.left;
+        self.mouseY = e.clientY - bound.top;
+        self.mouseActive = true;
     };
-    canvas.addEventListener('mousedown', activate, false);
+    canvas.addEventListener('mousemove', updateMouse, false);
+    canvas.addEventListener('mouseleave', function(e) { self.mouseActive = false }, false)
 };
 
 $$.Main.prototype.mainLoop = function() {
@@ -36,14 +42,30 @@ $$.Main.prototype.mainLoop = function() {
 $$.Main.prototype.frame = function() {
     var newIx = this.field.randomIndex();
     var dna = DNA.randomDNA(64, Plant.randomOpcode);
-    var plant = new Plant.Plant(newIx[0], newIx[1], dna, [255,210,150], dna.randomIndex());
+    var plant = new Plant.Plant(newIx[0], newIx[1], dna, [255, 210, 150], dna.randomIndex());
     this.field.put(plant);
 
-    for (var i = 0; i < 500; i++) {
-        var iterIx = this.field.randomIndex();
-        var life = this.field.get(iterIx[0], iterIx[1]);
+
+    for (var i = 0; i < 100; i++) {
+        var x = Math.floor(Math.random() * this.field.width);
+        var y = Math.floor(Math.random() * this.field.height);
+        var life = this.field.get(x, y);
         if (life) {
             life.run(this.field);
+        }
+    }
+
+    if (this.mouseActive) {
+        var spiritOfTheForestRadius = 25;
+        for (var i = 0; i < 100; i++) {
+            var x0 = this.mouseX;
+            var y0 = this.mouseY;
+            var x = x0 + Math.floor(Math.random() * 2 * spiritOfTheForestRadius) - spiritOfTheForestRadius;
+            var y = y0 + Math.floor(Math.random() * 2 * spiritOfTheForestRadius) - spiritOfTheForestRadius;
+            var life = this.field.get(x, y);
+            if (life) {
+                life.run(this.field);
+            }
         }
     }
 };
