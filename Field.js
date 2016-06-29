@@ -3,8 +3,9 @@ FieldModule = function() {
     var $$ = this;
     var MAXENERGY = 50;
 
-    $$.Field = function (canvas) {
+    $$.Field = function (canvas, energyCanvas) {
         this.ctx = canvas.getContext('2d');
+        this.energyCtx = energyCanvas.getContext('2d');
         this.width = canvas.width;
         this.height = canvas.height;
         this.grid = new Array(this.width);
@@ -36,8 +37,7 @@ FieldModule = function() {
     $$.Field.prototype.del = function (x, y) {
         if (this.inRange(x, y)) {
             this.grid[x][y].value = null;
-            this.ctx.fillStyle = '#ffffff';
-            this.ctx.fillRect(x, y, 1, 1);
+            this.ctx.clearRect(x, y, 1, 1);
         }
     };
 
@@ -54,10 +54,7 @@ FieldModule = function() {
         if (this.inRange(x,y)) {
             var e = this.grid[x][y].energy;
             this.grid[x][y].energy = 0;
-            if (this.grid[x][y].value == null) {
-                this.ctx.fillStyle = 'rgb(255,255,255)';
-                this.ctx.fillRect(x,y,1,1);
-            }
+            this.energyCtx.clearRect(x,y,1,1);
             return e;
         }
         else
@@ -73,10 +70,8 @@ FieldModule = function() {
             if (cell.energy > MAXENERGY) {
                 cell.energy = MAXENERGY;
             }
-            if (cell.value == null) {
-                this.ctx.fillStyle = 'rgb(' + (255-5*cell.energy) + ',255,255)';
-                this.ctx.fillRect(x,y,1,1);
-            }
+            this.energyCtx.fillStyle = 'rgb(' + (255-5*cell.energy) + ',255,255)';
+            this.energyCtx.fillRect(x,y,1,1);
         }
     };
 

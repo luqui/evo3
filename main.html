@@ -1,9 +1,24 @@
 <html>
  <head>
   <style>
-    #mainCanvas {
-      image-rendering: pixelated;
-    }
+      #mainCanvas {
+          image-rendering: pixelated;
+          position: absolute;
+          left: 25px;
+          top: 25px;
+          z-index: 0;
+      }
+      #energyCanvas {
+          image-rendering: pixelated;
+          position: absolute;
+          left: 25px;
+          top: 25px;
+          z-index: 1;
+      }
+      #pauseDiv {
+          position: absolute;
+          top: 450px;
+      }
   </style>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
@@ -22,14 +37,16 @@
         'Field': new FieldModule(),
         'Plant': new PlantModule(Grammar),
      });
-     var main = new Main.Main(window, $('#mainCanvas')[0], $('#pause'));
+     var main = new Main.Main(window, $('#mainCanvas')[0], $('#energyCanvas')[0], $('#pause'));
      main.mainLoop();
    });
   </script>
  </head>
  <body>
+  <canvas id="energyCanvas" width="600" height="400"></canvas>
   <canvas id="mainCanvas" width="600" height="400"></canvas>
-  <br />
-  <input type="checkbox" id="pause" /> Pause
+  <div id="pauseDiv">
+    <input type="checkbox" id="pause" /> Pause
+  </div>
  </body>
 </html>

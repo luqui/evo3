@@ -7,9 +7,9 @@ MainModule = function(deps) {
     var Field = deps['Field'];
     var Plant = deps['Plant'];
 
-    $$.Main = function (window, canvas, pause) {
+    $$.Main = function (window, canvas, energyCanvas, pause) {
         this.window = window;
-        this.field = new Field.Field(canvas);
+        this.field = new Field.Field(canvas, energyCanvas);
         this.pause = pause;
 
         var field = this.field;
@@ -29,6 +29,17 @@ MainModule = function(deps) {
         canvas.addEventListener('mouseleave', function (e) {
             self.mouseActive = false
         }, false);
+
+        document.body.addEventListener('keydown', function(e) {
+            if (e.shiftKey) {
+                canvas.style.visibility = 'hidden';
+            }
+        });
+        document.body.addEventListener('keyup', function(e) {
+            if (!e.shiftKey) {
+                canvas.style.visibility = 'visible';
+            }
+        });
     };
 
     $$.Main.prototype.mainLoop = function () {
