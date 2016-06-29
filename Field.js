@@ -1,11 +1,9 @@
 FieldModule = function() {
 
     var $$ = this;
-    var MAXENERGY = 50;
 
-    $$.Field = function (canvas, energyCanvas) {
+    $$.Field = function (canvas) {
         this.ctx = canvas.getContext('2d');
-        this.energyCtx = energyCanvas.getContext('2d');
         this.width = canvas.width;
         this.height = canvas.height;
         this.grid = new Array(this.width);
@@ -16,7 +14,6 @@ FieldModule = function() {
             for (var y = 0; y < this.height; y++) {
                 this.grid[x][y] = {
                     value: null,
-                    energy: 0,
                 };
             }
         }
@@ -47,31 +44,6 @@ FieldModule = function() {
         }
         else {
             return null;
-        }
-    };
-
-    $$.Field.prototype.takeEnergy = function(x, y) {
-        if (this.inRange(x,y)) {
-            var e = this.grid[x][y].energy;
-            this.grid[x][y].energy = 0;
-            this.energyCtx.clearRect(x,y,1,1);
-            return e;
-        }
-        else
-        {
-            return 0;
-        }
-    };
-
-    $$.Field.prototype.putEnergy = function(x, y, e) {
-        if (this.inRange(x,y)) {
-            var cell = this.grid[x][y];
-            cell.energy += e;
-            if (cell.energy > MAXENERGY) {
-                cell.energy = MAXENERGY;
-            }
-            this.energyCtx.fillStyle = 'rgb(' + (255-5*cell.energy) + ',255,255)';
-            this.energyCtx.fillRect(x,y,1,1);
         }
     };
 

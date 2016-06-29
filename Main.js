@@ -7,9 +7,9 @@ MainModule = function(deps) {
     var Field = deps['Field'];
     var Plant = deps['Plant'];
 
-    $$.Main = function (window, canvas, energyCanvas, pause) {
+    $$.Main = function (window, canvas, pause) {
         this.window = window;
-        this.field = new Field.Field(canvas, energyCanvas);
+        this.field = new Field.Field(canvas);
         this.pause = pause;
 
         var field = this.field;
@@ -25,21 +25,11 @@ MainModule = function(deps) {
             self.mouseY = e.clientY - bound.top;
             self.mouseActive = true;
         };
-        energyCanvas.addEventListener('mousemove', updateMouse, false);
-        energyCanvas.addEventListener('mouseleave', function (e) {
+        canvas.addEventListener('mousemove', updateMouse, false);
+        canvas.addEventListener('mouseleave', function (e) {
             self.mouseActive = false
         }, false);
 
-        document.body.addEventListener('keydown', function(e) {
-            if (e.shiftKey) {
-                canvas.style.visibility = 'hidden';
-            }
-        });
-        document.body.addEventListener('keyup', function(e) {
-            if (!e.shiftKey) {
-                canvas.style.visibility = 'visible';
-            }
-        });
     };
 
     $$.Main.prototype.mainLoop = function () {
@@ -61,10 +51,9 @@ MainModule = function(deps) {
         self.field.put(plant);
 
         (function() {
-            for (var i = 0; i < 500; i++) {
+            for (var i = 0; i < 20000; i++) {
                 var x = Math.floor(Math.random() * self.field.width);
                 var y = Math.floor(Math.random() * self.field.height);
-                self.field.putEnergy(x, y, 1);
 
                 var action = self.field.dequeueAction();
                 if (action) {
@@ -91,7 +80,6 @@ MainModule = function(deps) {
                     var theta = Math.random()*2*Math.PI;
                     var x = x0 + Math.round(r*Math.cos(theta));
                     var y = y0 + Math.round(r*Math.sin(theta));
-                    self.field.putEnergy(x, y, 1);
                     var life = self.field.get(x, y);
                     if (life) {
                         life.run(self.field);

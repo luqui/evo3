@@ -38,55 +38,45 @@ PlantModule = function(Grammar) {
             }
         };
 
-        var energy = field.takeEnergy(self.x, self.y);
         var dir;
         var target;
-        while (energy --> 0) {
-            switch (code[0]) {
-                case 'Grow':
-                    dir = directionToD(code[1]);
-                    grow(dir[0], dir[1], code[2]);
-                    this.startIndex = code[3];
-                    break;
-                case 'Attack':
-                    dir = directionToD(code[1]);
-                    attack(dir[0], dir[1]);
+        switch (code[0]) {
+            case 'Grow':
+                dir = directionToD(code[1]);
+                grow(dir[0], dir[1], code[2]);
+                this.startIndex = code[3];
+                break;
+            case 'Attack':
+                dir = directionToD(code[1]);
+                attack(dir[0], dir[1]);
+                this.startIndex = code[2];
+                break;
+            case 'SetColor':
+                this.color = [code[1], code[2], code[3]];
+                this.startIndex = code[4];
+                field.put(this);
+                break;
+            case 'Mutate':
+                this.dna = $$.grammar.mutate(this.dna);
+                this.startIndex = code[1];
+                break;
+            case 'CmpColor':
+                dir = directionToD(code[1]);
+                target = field.get(this.x + dir[0], this.y + dir[1]);
+                if (!target) {
                     this.startIndex = code[2];
-                    break;
-                case 'SetColor':
-                    this.color = [code[1], code[2], code[3]];
-                    this.startIndex = code[4];
-                    field.put(this);
-                    break;
-                case 'Mutate':
-                    this.dna = $$.grammar.mutate(this.dna);
-                    this.startIndex = code[1];
-                    break;
-                case 'CmpColor':
-                    dir = directionToD(code[1]);
-                    target = field.get(this.x + dir[0], this.y + dir[1]);
-                    if (!target) {
-                        this.startIndex = code[2];
-                    }
-                    else if (this.color[0] == target.color[0] &&
-                        this.color[1] == target.color[1] &&
-                        this.color[2] == target.color[2]) {
-                        this.startIndex = code[3];
-                    }
-                    else {
-                        this.startIndex = code[4];
-                    }
-                    break;
-                case 'PassEnergy':
-                    dir = directionToD(code[1]);
-                    field.putEnergy(this.x + dir[0], this.y + dir[1], Math.min(energy, code[2]));
-                    energy -= Math.min(energy, code[2]);
-                    field.enqueueAction(this.x + dir[0], this.y + dir[1]);
+                }
+                else if (this.color[0] == target.color[0] &&
+                    this.color[1] == target.color[1] &&
+                    this.color[2] == target.color[2]) {
                     this.startIndex = code[3];
-                    break;
-                default:
-                    throw('Undefined opcode: ' + code[0]);
-            }
+                }
+                else {
+                    this.startIndex = code[4];
+                }
+                break;
+            default:
+                throw('Undefined opcode: ' + code[0]);
         }
     };
 
@@ -96,6 +86,5 @@ PlantModule = function(Grammar) {
         SetColor: [Grammar.range(0,256), Grammar.range(0,256), Grammar.range(0,256), Grammar.label],
         Mutate: [Grammar.label],
         CmpColor: [Grammar.range(0,4), Grammar.label, Grammar.label, Grammar.label],
-        PassEnergy: [Grammar.range(0,4), Grammar.range(1,10), Grammar.label],
     });
 };
