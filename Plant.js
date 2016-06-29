@@ -16,10 +16,10 @@ PlantModule = function(Grammar) {
 
     $$.Plant.prototype.interp = function (code, field) {
         var self = this;
-        var grow = function (dx, dy, index) {
+        var grow = function (dx, dy, dna, index) {
             var target = field.get(self.x + dx, self.y + dy);
             if (!target) {
-                field.put(new $$.Plant(self.x + dx, self.y + dy, self.dna, self.color, index));
+                field.put(new $$.Plant(self.x + dx, self.y + dy, dna, self.color, index));
             }
         };
         var attack = function(dx, dy) {
@@ -38,12 +38,11 @@ PlantModule = function(Grammar) {
             }
         };
 
-        var dir;
-        var target;
+        var dir, targetDir, target;
         switch (code[0]) {
             case 'Grow':
                 dir = directionToD(code[1]);
-                grow(dir[0], dir[1], code[2]);
+                grow(dir[0], dir[1], this.dna, code[2]);
                 this.startIndex = code[3];
                 break;
             case 'Attack':
@@ -59,6 +58,15 @@ PlantModule = function(Grammar) {
             case 'Mutate':
                 this.dna = $$.grammar.mutate(this.dna);
                 this.startIndex = code[1];
+                break;
+            case 'HaveSex':
+                dir = directionToD(code[1]);
+                targetDir = directionToD(code[2]);
+                target = field.get(this.x + targetDir[0], this.y + targetDir[1]);
+                if (target) {
+                    grow(dir[0], dir[1], $$.grammar.sex(this.dna, target.dna), code[3]);
+                }
+                this.startIndex = code[4];
                 break;
             case 'CmpColor':
                 dir = directionToD(code[1]);
@@ -85,6 +93,7 @@ PlantModule = function(Grammar) {
         Attack: [Grammar.range(0,4), Grammar.label],
         SetColor: [Grammar.range(0,256), Grammar.range(0,256), Grammar.range(0,256), Grammar.label],
         Mutate: [Grammar.label],
+        HaveSex: [Grammar.range(0,4), Grammar.range(0,4), Grammar.label, Grammar.label],
         CmpColor: [Grammar.range(0,4), Grammar.label, Grammar.label, Grammar.label],
     });
 };

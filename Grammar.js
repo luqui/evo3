@@ -21,6 +21,16 @@ GrammarModule = function(DNA) {
         return new DNA.DNA(newCode);
     };
 
+    $$.Grammar.prototype.sex = function(dna1, dna2) {
+        var newCode = dna1.dna.slice(0);
+        for (var i = 0; i < this.size; i++) {
+            if (Math.random() < 0.5) {
+                newCode[i] = dna2.dna[i];
+            }
+        }
+        return new DNA.DNA(newCode);
+    };
+
     $$.Grammar.prototype.randomOpcode = function() {
         var keys = Object.keys(this.spec);
         var opcode = keys[Math.floor(Math.random()*keys.length)];
