@@ -18,8 +18,14 @@ PlantModule = function(Grammar) {
         var self = this;
         var grow = function (dx, dy, index) {
             var target = field.get(self.x + dx, self.y + dy);
-            if (!target || self.power > target.power) {
+            if (!target) {
                 field.put(new $$.Plant(self.x + dx, self.y + dy, self.dna, self.color, index));
+            }
+        };
+        var attack = function(dx, dy) {
+            var target = field.get(self.x + dx, self.y + dy);
+            if (target) {
+                field.del(self.x + dx, self.y + dy);
             }
         };
         var directionToD = function(dir) {
@@ -32,20 +38,22 @@ PlantModule = function(Grammar) {
             }
         }
 
+        var dir;
         switch (code[0]) {
             case 'Grow':
-                var dir = directionToD(code[1]);
+                dir = directionToD(code[1]);
                 grow(dir[0], dir[1], code[2]);
                 this.startIndex = code[3];
+                break;
+            case 'Attack':
+                dir = directionToD(code[1]);
+                attack(dir[0], dir[1]);
+                this.startIndex = code[2];
                 break;
             case 'SetColor':
                 this.color = [code[1], code[2], code[3]];
                 this.startIndex = code[4];
                 field.put(this);
-                break;
-            case 'IncreasePower':
-                this.power += 1;
-                this.startindex = code[1];
                 break;
             case 'Mutate':
                 this.dna = $$.grammar.mutate(this.dna);
@@ -58,8 +66,8 @@ PlantModule = function(Grammar) {
 
     $$.grammar = new Grammar.Grammar(64, {
         Grow: [Grammar.range(0,4), Grammar.label, Grammar.label],
+        Attack: [Grammar.range(0,4), Grammar.label],
         SetColor: [Grammar.range(0,256), Grammar.range(0,256), Grammar.range(0,256), Grammar.label],
-        IncreasePower: [Grammar.label],
         Mutate: [Grammar.label],
     });
 };
