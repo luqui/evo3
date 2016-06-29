@@ -6,9 +6,10 @@ var DNA = deps['DNA'];
 var Field = deps['Field'];
 var Plant = deps['Plant'];
 
-$$.Main = function(window, canvas) {
+$$.Main = function(window, canvas, pause) {
     this.window = window;
     this.field = new Field.Field(canvas);
+    this.pause = pause;
 
     var field = this.field;
 
@@ -24,7 +25,9 @@ $$.Main = function(window, canvas) {
 $$.Main.prototype.mainLoop = function() {
     var self = this;
     var frameLoop = function() {
-        self.frame();
+        if (!self.pause.prop('checked')) {
+            self.frame();
+        }
         window.requestAnimationFrame(frameLoop);
     };
     window.requestAnimationFrame(frameLoop);
@@ -32,11 +35,11 @@ $$.Main.prototype.mainLoop = function() {
 
 $$.Main.prototype.frame = function() {
     var newIx = this.field.randomIndex();
-    var dna = DNA.randomDNA(10, Plant.randomOpcode);
+    var dna = DNA.randomDNA(64, Plant.randomOpcode);
     var plant = new Plant.Plant(newIx[0], newIx[1], dna, [255,210,150], dna.randomIndex());
     this.field.put(plant);
 
-    for (var i = 0; i < 50; i++) {
+    for (var i = 0; i < 500; i++) {
         var iterIx = this.field.randomIndex();
         var life = this.field.get(iterIx[0], iterIx[1]);
         if (life) {

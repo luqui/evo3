@@ -8,6 +8,7 @@ $$.Plant = function(x, y, code, color, startIndex) {
     this.code = code;
     this.color = color;
     this.startIndex = startIndex;
+    this.power = 0;
 };
 
 $$.Plant.prototype.run = function(field) {
@@ -17,13 +18,13 @@ $$.Plant.prototype.run = function(field) {
 $$.Plant.prototype.interp = function(code, field) {
     var self = this;
     var grow = function(dx, dy, index) {
-        if (!field.get(self.x + dx, self.y + dy)) {
+        var target = field.get(self.x + dx, self.y + dy);
+        if (!target || self.power > target.power) {
             field.put(new $$.Plant(self.x + dx, self.y + dy, self.code, self.color, index));
         }
     };
 
     switch (code[0]) {
-        // [Grow* <start label of child> <continuation label>]
         case 'GrowUp':
             grow(0, -1, code[1]);
             this.startIndex = code[2];
@@ -45,6 +46,10 @@ $$.Plant.prototype.interp = function(code, field) {
             this.startIndex = code[4];
             field.put(this);
             break;
+        case 'IncreasePower':
+            this.power += 1;
+            this.startindex = code[1];
+            break;
         default:
             throw('Undefined opcode: ' + code[0]);
     }
@@ -56,7 +61,7 @@ $$.randomOpcode = function(over) {
         return Math.floor(Math.random() * n);
     };
 
-    var s = Math.floor(Math.random()*5);
+    var s = Math.floor(Math.random()*6);
 
     switch (s) {
         case 0: return [ 'GrowUp', over(), over() ];
@@ -64,6 +69,7 @@ $$.randomOpcode = function(over) {
         case 2: return [ 'GrowLeft', over(), over() ];
         case 3: return [ 'GrowRight', over(), over() ];
         case 4: return [ 'SetColor',  randn(255), randn(255), randn(255), over() ];
+        case 5: return [ 'IncreasePower', over() ];
         default: throw('Impossible case: ' + s);
     }
 };
