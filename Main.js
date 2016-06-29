@@ -25,8 +25,8 @@ MainModule = function(deps) {
             self.mouseY = e.clientY - bound.top;
             self.mouseActive = true;
         };
-        canvas.addEventListener('mousemove', updateMouse, false);
-        canvas.addEventListener('mouseleave', function (e) {
+        energyCanvas.addEventListener('mousemove', updateMouse, false);
+        energyCanvas.addEventListener('mouseleave', function (e) {
             self.mouseActive = false
         }, false);
 
