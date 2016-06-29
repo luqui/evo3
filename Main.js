@@ -32,9 +32,8 @@ $$.Main.prototype.mainLoop = function() {
 
 $$.Main.prototype.frame = function() {
     var newIx = this.field.randomIndex();
-    var plant = new Plant.Plant(
-        newIx[0], newIx[1],
-        DNA.randomDNA(10, Plant.randomOpcode));
+    var dna = DNA.randomDNA(10, Plant.randomOpcode);
+    var plant = new Plant.Plant(newIx[0], newIx[1], dna, dna.randomIndex());
     this.field.put(plant);
 
     for (var i = 0; i < 50; i++) {

@@ -2,34 +2,42 @@ PlantModule = function() {
 
 var $$ = this;
 
-$$.Plant = function(x, y, code) {
+$$.Plant = function(x, y, code, startIndex) {
     this.x = x;
     this.y = y;
     this.code = code;
+    this.startIndex = startIndex;
 };
 
 $$.Plant.prototype.run = function(field) {
-    this.interp(this.code.code[this.code.startIndex], field);
+    this.interp(this.code.code[this.startIndex], field);
 };
 
 $$.Plant.prototype.interp = function(code, field) {
     var self = this;
-    var grow = function(dx, dy) {
-        field.put(new $$.Plant(self.x + dx, self.y + dy, self.code));
+    var grow = function(dx, dy, index) {
+        if (!field.get(self.x + dx, self.y + dy)) {
+            field.put(new $$.Plant(self.x + dx, self.y + dy, self.code, index));
+        }
     };
 
     switch (code[0]) {
+        // [Grow* <start label of child> <continuation label>]
         case 'GrowUp':
-            grow(0, -1);
+            grow(0, -1, code[1]);
+            this.startIndex = code[2];
             break;
         case 'GrowDown':
-            grow(0, 1);
+            grow(0, 1, code[1]);
+            this.startIndex = code[2];
             break;
         case 'GrowLeft':
-            grow(-1, 0);
+            grow(-1, 0, code[1]);
+            this.startIndex = code[2];
             break;
         case 'GrowRight':
-            grow(1, 0);
+            grow(1, 0, code[1]);
+            this.startIndex = code[2];
             break;
         default:
             throw('Undefined opcode: ' + code[0]);
@@ -40,10 +48,10 @@ $$.Plant.prototype.interp = function(code, field) {
 $$.randomOpcode = function(over) {
     var s = Math.floor(Math.random()*4);
     switch (s) {
-        case 0: return [ 'GrowUp' ];
-        case 1: return [ 'GrowDown' ];
-        case 2: return [ 'GrowLeft' ];
-        case 3: return [ 'GrowRight' ];
+        case 0: return [ 'GrowUp', over(), over() ];
+        case 1: return [ 'GrowDown', over(), over() ];
+        case 2: return [ 'GrowLeft', over(), over() ];
+        case 3: return [ 'GrowRight', over(), over() ];
         default: throw('Impossible case: ' + s);
     }
 };
