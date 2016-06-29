@@ -8,7 +8,6 @@ PlantModule = function(Grammar) {
         this.dna = code;
         this.color = color;
         this.startIndex = startIndex;
-        this.power = 0;
     };
 
     $$.Plant.prototype.run = function (field) {
@@ -23,23 +22,21 @@ PlantModule = function(Grammar) {
                 field.put(new $$.Plant(self.x + dx, self.y + dy, self.dna, self.color, index));
             }
         };
+        var directionToD = function(dir) {
+            switch(dir) {
+                case 0: return [1,0];
+                case 1: return [0,-1];
+                case 2: return [-1,0];
+                case 3: return [0,1];
+                default: throw("Invalid direction: " + dir);
+            }
+        }
 
         switch (code[0]) {
-            case 'GrowUp':
-                grow(0, -1, code[1]);
-                this.startIndex = code[2];
-                break;
-            case 'GrowDown':
-                grow(0, 1, code[1]);
-                this.startIndex = code[2];
-                break;
-            case 'GrowLeft':
-                grow(-1, 0, code[1]);
-                this.startIndex = code[2];
-                break;
-            case 'GrowRight':
-                grow(1, 0, code[1]);
-                this.startIndex = code[2];
+            case 'Grow':
+                var dir = directionToD(code[1]);
+                grow(dir[0], dir[1], code[2]);
+                this.startIndex = code[3];
                 break;
             case 'SetColor':
                 this.color = [code[1], code[2], code[3]];
@@ -60,10 +57,7 @@ PlantModule = function(Grammar) {
     };
 
     $$.grammar = new Grammar.Grammar(64, {
-        GrowUp: [Grammar.label, Grammar.label],
-        GrowDown: [Grammar.label, Grammar.label],
-        GrowLeft: [Grammar.label, Grammar.label],
-        GrowRight: [Grammar.label, Grammar.label],
+        Grow: [Grammar.range(0,4), Grammar.label, Grammar.label],
         SetColor: [Grammar.range(0,256), Grammar.range(0,256), Grammar.range(0,256), Grammar.label],
         IncreasePower: [Grammar.label],
         Mutate: [Grammar.label],
