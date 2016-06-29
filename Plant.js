@@ -2,7 +2,7 @@ PlantModule = function(Grammar) {
 
     var $$ = this;
 
-    $$.Plant = function (x, y, code, color, startIndex, speciesId) {
+    $$.Plant = function (x, y, code, color, startIndex) {
         this.x = x;
         this.y = y;
         this.dna = code;
