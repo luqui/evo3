@@ -79,9 +79,9 @@ PlantModule = function(Grammar) {
                     break;
                 case 'PassEnergy':
                     dir = directionToD(code[1]);
-                    energy += 1; // it doesn't take energy to pass energy (look out, could be degenerate)
                     field.putEnergy(this.x + dir[0], this.y + dir[1], Math.min(energy, code[2]));
                     energy -= Math.min(energy, code[2]);
+                    field.enqueueAction(this.x + dir[0], this.y + dir[1]);
                     this.startIndex = code[3];
                     break;
                 default:

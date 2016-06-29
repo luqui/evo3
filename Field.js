@@ -8,6 +8,8 @@ FieldModule = function() {
         this.width = canvas.width;
         this.height = canvas.height;
         this.grid = new Array(this.width);
+        this.actionQueue = [];
+        this.actionQueueRev = [];
         for (var x = 0; x < this.width; x++) {
             this.grid[x] = new Array(this.height);
             for (var y = 0; y < this.height; y++) {
@@ -76,6 +78,21 @@ FieldModule = function() {
                 this.ctx.fillRect(x,y,1,1);
             }
         }
+    };
+
+    $$.Field.prototype.enqueueAction = function(x, y) {
+        if (this.inRange(x,y)) {
+            this.actionQueue.push([x,y]);
+        }
+    };
+
+    $$.Field.prototype.dequeueAction = function() {
+        if (this.actionQueueRev.length == 0) {
+            this.actionQueueRev = this.actionQueue;
+            this.actionQueueRev.reverse();
+            this.actionQueue = [];
+        }
+        return this.actionQueueRev.pop() || null;
     };
 
     $$.Field.prototype.randomIndex = function () {

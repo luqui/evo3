@@ -28,7 +28,7 @@ MainModule = function(deps) {
         canvas.addEventListener('mousemove', updateMouse, false);
         canvas.addEventListener('mouseleave', function (e) {
             self.mouseActive = false
-        }, false)
+        }, false);
     };
 
     $$.Main.prototype.mainLoop = function () {
@@ -50,10 +50,17 @@ MainModule = function(deps) {
         self.field.put(plant);
 
         (function() {
-            for (var i = 0; i < 100; i++) {
+            for (var i = 0; i < 500; i++) {
                 var x = Math.floor(Math.random() * self.field.width);
                 var y = Math.floor(Math.random() * self.field.height);
                 self.field.putEnergy(x, y, 1);
+
+                var action = self.field.dequeueAction();
+                if (action) {
+                    x = action[0];
+                    y = action[1];
+                }
+
                 var life = self.field.get(x, y);
                 if (life) {
                     life.run(self.field);
