@@ -66,8 +66,12 @@ MainModule = function(deps) {
                 for (var i = 0; i < 100; i++) {
                     var x0 = self.mouseX;
                     var y0 = self.mouseY;
-                    var x = x0 + Math.floor(Math.random() * 2 * spiritOfTheForestRadius) - spiritOfTheForestRadius;
-                    var y = y0 + Math.floor(Math.random() * 2 * spiritOfTheForestRadius) - spiritOfTheForestRadius;
+                    var r = -spiritOfTheForestRadius*Math.log(Math.random());
+                    if (r == Infinity) continue;  // because log(0) might happen once in a blue moon.
+
+                    var theta = Math.random()*2*Math.PI;
+                    var x = x0 + Math.round(r*Math.cos(theta));
+                    var y = y0 + Math.round(r*Math.sin(theta));
                     var life = self.field.get(x, y);
                     if (life) {
                         life.run(self.field);
