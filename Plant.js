@@ -2,10 +2,11 @@ PlantModule = function() {
 
 var $$ = this;
 
-$$.Plant = function(x, y, code, startIndex) {
+$$.Plant = function(x, y, code, color, startIndex) {
     this.x = x;
     this.y = y;
     this.code = code;
+    this.color = color;
     this.startIndex = startIndex;
 };
 
@@ -17,7 +18,7 @@ $$.Plant.prototype.interp = function(code, field) {
     var self = this;
     var grow = function(dx, dy, index) {
         if (!field.get(self.x + dx, self.y + dy)) {
-            field.put(new $$.Plant(self.x + dx, self.y + dy, self.code, index));
+            field.put(new $$.Plant(self.x + dx, self.y + dy, self.code, self.color, index));
         }
     };
 
@@ -39,6 +40,11 @@ $$.Plant.prototype.interp = function(code, field) {
             grow(1, 0, code[1]);
             this.startIndex = code[2];
             break;
+        case 'SetColor':
+            this.color = [code[1], code[2], code[3]];
+            this.startIndex = code[4];
+            field.put(this);
+            break;
         default:
             throw('Undefined opcode: ' + code[0]);
     }
@@ -46,12 +52,18 @@ $$.Plant.prototype.interp = function(code, field) {
 
 // randomOpcode : (-> Sexp) -> Sexp
 $$.randomOpcode = function(over) {
-    var s = Math.floor(Math.random()*4);
+    var randn = function(n) {
+        return Math.floor(Math.random() * n);
+    };
+
+    var s = Math.floor(Math.random()*5);
+
     switch (s) {
         case 0: return [ 'GrowUp', over(), over() ];
         case 1: return [ 'GrowDown', over(), over() ];
         case 2: return [ 'GrowLeft', over(), over() ];
         case 3: return [ 'GrowRight', over(), over() ];
+        case 4: return [ 'SetColor',  randn(255), randn(255), randn(255), over() ];
         default: throw('Impossible case: ' + s);
     }
 };

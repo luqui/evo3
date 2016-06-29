@@ -22,7 +22,7 @@ $$.Field.prototype.inRange = function(x,y) {
 $$.Field.prototype.put = function(obj) {
     if (this.inRange(obj.x, obj.y)) {
         this.grid[obj.x][obj.y] = obj;
-        this.ctx.fillStyle = '#ff0000';
+        this.ctx.fillStyle = 'rgb(' + obj.color[0] + ',' + obj.color[1] + ',' + obj.color[2] + ')';
         this.ctx.fillRect(obj.x, obj.y, 1, 1);
     }
 };
