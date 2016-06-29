@@ -13,8 +13,9 @@ $$.Plant.prototype.run = function(field) {
 };
 
 $$.Plant.prototype.interp = function(code, field) {
+    var self = this;
     var grow = function(dx, dy) {
-        field.put(new $$.Plant(this.x + dx, this.y + dy, this.code));
+        field.put(new $$.Plant(self.x + dx, self.y + dy, self.code));
     };
 
     switch (code[0]) {
