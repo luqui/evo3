@@ -7,7 +7,7 @@ GrammarModule = function(DNA) {
     };
 
     $$.Grammar.prototype.mutate = function(dna) {
-        var newCode = dna.code.slice(0);
+        var newCode = dna.dna.slice(0);
         var ix = Math.floor(Math.random() * newCode.length);
         var newOpcode = newCode[ix].slice(0);
         var posn = Math.floor(Math.random() * newOpcode.length);
